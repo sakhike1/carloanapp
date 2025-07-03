@@ -239,7 +239,7 @@
           <BaseButton 
             size="lg"
             variant="outline"
-            class="border-white text-white hover:bg-white hover:text-primary-600"
+            class="text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:opacity-90 hover:scale-105 transform transition-all duration-300 !border-0 !outline-none !ring-0 focus:!border-0 focus:!outline-none focus:!ring-0 active:!border-0 active:!outline-none active:!ring-0"
             @click="$router.push('/')"
           >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,7 +250,7 @@
           <BaseButton 
             size="lg"
             variant="ghost"
-            class="text-white hover:bg-white/10"
+            class="text-white bg-gradient-to-r from-secondary-600 to-primary-600 hover:opacity-90 hover:scale-105 transform transition-all duration-300 !border-0 !outline-none !ring-0 focus:!border-0 focus:!outline-none focus:!ring-0 active:!border-0 active:!outline-none active:!ring-0"
             @click="scrollToCalculator"
           >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,7 +265,7 @@
 </template>
 
 <script setup lang="ts">
-import BaseButton from '@/components/BaseButton.vue';
+import BaseButton from '../components/BaseButton.vue';
 
 const scrollToCalculator = () => {
   // Navigate to home page and scroll to calculator

@@ -3,6 +3,7 @@
     :class="buttonClasses"
     :disabled="disabled || loading"
     @click="$emit('click', $event)"
+    v-bind="$attrs"
   >
     <div v-if="loading" class="animate-spin mr-2">
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -26,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false });
 import { computed } from 'vue';
 
 interface Props {

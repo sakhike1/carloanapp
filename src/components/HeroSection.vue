@@ -12,24 +12,33 @@
 
     <!-- Dynamic Crossfading Background -->
     <div class="absolute inset-0 w-full h-full">
-      <transition-group name="fade-bg" tag="div">
+      <transition-group name="fade-bg" tag="div" class="relative w-full h-full">
         <video
           v-if="currentAsset.type === 'video'"
           :key="'video-' + currentAsset.src"
-          class="w-full h-full object-cover object-center absolute inset-0 transition-opacity duration-1000"
+          class="w-full h-full object-cover object-center absolute inset-0"
           autoplay
           muted
           loop
           playsinline
+          preload="auto"
+          webkit-playsinline
           :src="currentAsset.src"
           @error="handleVideoError"
+          @loadeddata="handleVideoLoaded"
+          @canplay="handleVideoCanPlay"
+          @loadstart="handleVideoLoadStart"
+          @play="handleVideoPlay"
+          @pause="handleVideoPause"
         />
         <img
           v-else-if="currentAsset.type === 'image'"
           :key="'image-' + currentAsset.src"
           :src="currentAsset.src"
-          class="w-full h-full object-cover object-center absolute inset-0 transition-opacity duration-1000"
+          class="w-full h-full object-cover object-center absolute inset-0"
           :alt="currentAsset.alt"
+          @load="handleImageLoaded"
+          @error="handleImageError"
         />
       </transition-group>
       <div class="absolute inset-0 bg-gradient-to-r from-primary-900/80 via-primary-900/60 to-transparent"></div>
@@ -199,8 +208,52 @@ const nextAsset = () => {
   currentAsset.value = assets[currentIndex.value];
 };
 
+const handleVideoPlay = (event: Event) => {
+  console.log('Video started playing:', (event.target as HTMLVideoElement).src);
+};
+
+const handleVideoPause = (event: Event) => {
+  console.log('Video paused:', (event.target as HTMLVideoElement).src);
+};
+
+const handleVideoLoaded = (event: Event) => {
+  const video = event.target as HTMLVideoElement;
+  console.log('Video loaded:', video.src);
+  // Ensure video is ready to play
+  if (video.readyState >= 3) {
+    video.play().catch(error => {
+      console.warn('Autoplay failed:', error);
+      // If autoplay fails, skip to next asset after a short delay
+      setTimeout(() => nextAsset(), 2000);
+    });
+  }
+};
+
+const handleVideoCanPlay = (event: Event) => {
+  const video = event.target as HTMLVideoElement;
+  console.log('Video can play:', video.src);
+  // Try to play when video is ready
+  video.play().catch(error => {
+    console.warn('Play failed in canplay:', error);
+  });
+};
+
+const handleVideoLoadStart = (event: Event) => {
+  console.log('Video load started:', (event.target as HTMLVideoElement).src);
+};
+
+const handleImageLoaded = (event: Event) => {
+  console.log('Image loaded:', (event.target as HTMLImageElement).src);
+};
+
+const handleImageError = (event: Event) => {
+  console.error('Image failed to load:', (event.target as HTMLImageElement).src);
+  nextAsset();
+};
+
 const handleVideoError = () => {
   // If a video fails, skip to the next asset
+  console.error('Video failed to load:', currentAsset.value.src);
   nextAsset();
 };
 
@@ -336,12 +389,17 @@ button:focus-visible {
 }
 
 .fade-bg-enter-active, .fade-bg-leave-active {
-  transition: opacity 1s;
+  transition: opacity 1.5s ease-in-out;
 }
 .fade-bg-enter-from, .fade-bg-leave-to {
   opacity: 0;
 }
 .fade-bg-enter-to, .fade-bg-leave-from {
   opacity: 1;
+}
+
+/* Ensure smooth transitions for all assets */
+.fade-bg-move {
+  transition: transform 1.5s ease-in-out;
 }
 </style>

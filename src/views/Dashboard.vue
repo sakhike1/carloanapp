@@ -221,7 +221,11 @@
           <div class="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl shadow-lg p-6 text-white">
             <h2 class="text-xl font-semibold mb-4">Need Help?</h2>
             <p class="text-primary-100 mb-4">Our loan specialists are here to assist you with any questions.</p>
-            <BaseButton variant="outline" full-width class="border-white text-white hover:bg-white hover:text-primary-600">
+            <BaseButton 
+              variant="outline" 
+              full-width 
+              :class="[contactClicked ? 'bg-gradient-to-r from-red-500 via-black to-gray-900 text-black' : 'border-white text-white', '!border-0 !outline-none !ring-0 focus:!border-0 focus:!outline-none focus:!ring-0 active:!border-0 active:!outline-none active:!ring-0']"
+              @click="handleContactClick">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
@@ -237,10 +241,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/auth';
-import { useLoanCalculatorStore } from '@/stores/loanCalculator';
-import { useNotificationStore } from '@/stores/notifications';
-import BaseButton from '@/components/BaseButton.vue';
+import { useAuthStore } from '../stores/auth';
+import { useLoanCalculatorStore } from '../stores/loanCalculator';
+import { useNotificationStore } from '../stores/notifications';
+import BaseButton from '../components/BaseButton.vue';
 
 const authStore = useAuthStore();
 const loanStore = useLoanCalculatorStore();
@@ -255,6 +259,7 @@ const {
 } = storeToRefs(loanStore);
 
 const isResetting = ref(false);
+const contactClicked = ref(false);
 
 const handleResetApplication = async () => {
   isResetting.value = true;
@@ -285,5 +290,17 @@ const handleResetApplication = async () => {
   } finally {
     isResetting.value = false;
   }
+};
+
+const scrollToBottom = () => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+};
+
+const handleContactClick = () => {
+  contactClicked.value = true;
+  scrollToBottom();
+  setTimeout(() => {
+    contactClicked.value = false;
+  }, 400); // Reset after 400ms for visual feedback
 };
 </script>
